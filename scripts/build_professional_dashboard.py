@@ -1667,11 +1667,11 @@ html_content = """<!DOCTYPE html>
         </div>
         <div class="preset-buttons">
           <button class="btn-preset active" onclick="setDatePreset('all')">Todo o Período</button>
-          <button class="btn-preset" onclick="setDatePreset('2026')">Ano 2026</button>
           <button class="btn-preset" onclick="setDatePreset('2025')">Ano 2025</button>
-          <button class="btn-preset" onclick="setDatePreset('last30')">Últimos 30 Dias</button>
+          <button class="btn-preset" onclick="setDatePreset('2026')">Ano 2026</button>
           <button class="btn-preset" onclick="setDatePreset('last90')">Últimos 90 Dias</button>
-          <button class="btn-preset" onclick="setDatePreset('thisMonth')">Agosto/2026</button>
+          <button class="btn-preset" onclick="setDatePreset('last30')">Últimos 30 Dias</button>
+          <button class="btn-preset" onclick="setDatePreset('thisMonth')">Agosto / 2026</button>
         </div>
       </div>
 
@@ -2677,8 +2677,9 @@ html_content = """<!DOCTYPE html>
 
   function setDatePreset(preset) {
     document.querySelectorAll('.btn-preset').forEach(b => b.classList.remove('active'));
-    if (window.event && window.event.target) {
-      window.event.target.classList.add('active');
+    const btnTarget = document.querySelector(`.btn-preset[onclick*="'${preset}'"]`);
+    if (btnTarget) {
+      btnTarget.classList.add('active');
     }
 
     const now = new Date("2026-08-26T23:59:59");
