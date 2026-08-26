@@ -16,12 +16,12 @@ if SCRIPTS_DIR not in sys.path:
     sys.path.insert(0, SCRIPTS_DIR)
 import env_loader
 
-EMAIL = os.getenv("JIRA_USER_EMAIL", os.getenv("JIRA_EMAIL", ""))
-TOKEN = os.getenv("JIRA_API_TOKEN", os.getenv("JIRA_TOKEN", ""))
-BASE_URL = os.getenv("JIRA_BASE_URL", "https://s1saude.atlassian.net")
+EMAIL = (os.getenv("JIRA_USER_EMAIL") or os.getenv("JIRA_EMAIL") or "").strip()
+TOKEN = (os.getenv("JIRA_API_TOKEN") or os.getenv("JIRA_TOKEN") or "").strip()
+BASE_URL = (os.getenv("JIRA_BASE_URL") or "").strip() or "https://s1saude.atlassian.net"
 
 if not EMAIL or not TOKEN:
-    print("AVISO: JIRA_USER_EMAIL ou JIRA_API_TOKEN não definidos no .env ou Secrets.")
+    print("AVISO: JIRA_USER_EMAIL ou JIRA_API_TOKEN não definidos. Histórico prévio será mantido se existir.")
 
 auth_str = f"{EMAIL}:{TOKEN}"
 auth_b64 = base64.b64encode(auth_str.encode('ascii')).decode('ascii')

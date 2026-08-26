@@ -19,11 +19,21 @@ interactions_src = os.path.join(DATA_DIR, "interacoes_usuarios.json")
 
 alertas_src = os.path.join(DATA_DIR, "alertas_diretoria_hoje.json")
 
-df = pd.read_excel(excel_src).fillna("")
-records = df.to_dict(orient="records")
+records = []
+if os.path.exists(excel_src):
+    try:
+        df = pd.read_excel(excel_src).fillna("")
+        records = df.to_dict(orient="records")
+    except Exception as e:
+        print(f"Aviso ao carregar Excel: {e}")
 
-with open(interactions_src, "r", encoding="utf-8") as f:
-    interactions_data = json.load(f)
+interactions_data = {}
+if os.path.exists(interactions_src):
+    try:
+        with open(interactions_src, "r", encoding="utf-8") as f:
+            interactions_data = json.load(f)
+    except Exception as e:
+        print(f"Aviso ao carregar interações: {e}")
 
 alertas_data = {}
 if os.path.exists(alertas_src):

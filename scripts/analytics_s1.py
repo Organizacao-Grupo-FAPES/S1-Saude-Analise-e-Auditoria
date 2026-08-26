@@ -34,7 +34,7 @@ def run_analytics():
     vigencia_counts = df_vidas["Vigência"].value_counts().to_dict()
     
     # Vigência cruzada com Status
-    vigencia_status = pd.crosstab(df_vidas["Vigência"], df_vidas["Status Atual"]).to_dict()
+    vigencia_status = pd.crosstab(df_vidas["Vigência"], df_vidas["Status Atual"]).to_dict() if len(df_vidas) > 0 else {}
     
     # 3. Top Empresas por Volume de Vidas
     df_vidas["Empresa / Contrato"] = df_vidas["Empresa / Contrato"].fillna("Não Informada").replace("", "Não Informada")
@@ -43,7 +43,7 @@ def run_analytics():
     # 4. Produtividade por Responsável (Auditor)
     df_vidas["Responsável"] = df_vidas["Responsável"].fillna("Não Atribuído")
     auditor_counts = df_vidas["Responsável"].value_counts().to_dict()
-    auditor_status = pd.crosstab(df_vidas["Responsável"], df_vidas["Status Atual"]).to_dict()
+    auditor_status = pd.crosstab(df_vidas["Responsável"], df_vidas["Status Atual"]).to_dict() if len(df_vidas) > 0 else {}
     
     # 5. Tipo Beneficiário (Titular vs Dependente)
     tipo_benef = df_vidas["Tipo Beneficiário"].value_counts().to_dict()
@@ -151,7 +151,7 @@ def run_analytics():
         
         # Resumo por Status
         df_status = pd.DataFrame(list(status_counts.items()), columns=["Status da Auditoria", "Qtd Vidas"])
-        df_status["% do Total"] = (df_status["Qtd Vidas"] / total_vidas * 100).round(2)
+        df_status["% do Total"] = (df_status["Qtd Vidas"] / max(total_vidas, 1) * 100).round(2)
         df_status.to_excel(writer, sheet_name="Resumo_Status", index=False)
         
         # Top Empresas Pendentes
@@ -169,17 +169,22 @@ def run_analytics():
         ])
         df_lt_summary.to_excel(writer, sheet_name="Lead_Time_Auditoria", index=False)
 
-        # Resumo por Vigência
-        df_vig = pd.crosstab(df_vidas["Vigência"], df_vidas["Status Atual"], margins=True, margins_name="Total Geral").reset_index()
-        df_vig.to_excel(writer, sheet_name="Resumo_Vigencias", index=False)
-        
-        # Resumo por Empresa
-        df_emp = pd.crosstab(df_vidas["Empresa / Contrato"], df_vidas["Status Atual"], margins=True, margins_name="Total Geral").reset_index()
-        df_emp.sort_values(by="Total Geral", ascending=False).to_excel(writer, sheet_name="Resumo_Empresas", index=False)
-        
-        # Resumo por Auditor
-        df_aud = pd.crosstab(df_vidas["Responsável"], df_vidas["Status Atual"], margins=True, margins_name="Total Geral").reset_index()
-        df_aud.to_excel(writer, sheet_name="Resumo_Auditores", index=False)
+        if len(df_vidas) > 0:
+            # Resumo por Vigência
+            df_vig = pd.crosstab(df_vidas["Vigência"], df_vidas["Status Atual"], margins=True, margins_name="Total Geral").reset_index()
+            df_vig.to_excel(writer, sheet_name="Resumo_Vigencias", index=False)
+            
+            # Resumo por Empresa
+            df_emp = pd.crosstab(df_vidas["Empresa / Contrato"], df_vidas["Status Atual"], margins=True, margins_name="Total Geral").reset_index()
+            df_emp.sort_values(by="Total Geral", ascending=False).to_excel(writer, sheet_name="Resumo_Empresas", index=False)
+            
+            # Resumo por Auditor
+            df_aud = pd.crosstab(df_vidas["Responsável"], df_vidas["Status Atual"], margins=True, margins_name="Total Geral").reset_index()
+            df_aud.to_excel(writer, sheet_name="Resumo_Auditores", index=False)
+        else:
+            pd.DataFrame().to_excel(writer, sheet_name="Resumo_Vigencias", index=False)
+            pd.DataFrame().to_excel(writer, sheet_name="Resumo_Empresas", index=False)
+            pd.DataFrame().to_excel(writer, sheet_name="Resumo_Auditores", index=False)
         
     print(f"Relatório Executivo Excel gerado em: {report_xlsx}")
     return analytics_payload

@@ -17,12 +17,16 @@ if SCRIPTS_DIR not in sys.path:
     sys.path.insert(0, SCRIPTS_DIR)
 import env_loader
 
-EMAIL = os.getenv("JIRA_USER_EMAIL", os.getenv("JIRA_EMAIL", ""))
-TOKEN = os.getenv("JIRA_API_TOKEN", os.getenv("JIRA_TOKEN", ""))
-BASE_URL = os.getenv("JIRA_BASE_URL", "https://s1saude.atlassian.net")
+EMAIL = (os.getenv("JIRA_USER_EMAIL") or os.getenv("JIRA_EMAIL") or "").strip()
+TOKEN = (os.getenv("JIRA_API_TOKEN") or os.getenv("JIRA_TOKEN") or "").strip()
+BASE_URL = (os.getenv("JIRA_BASE_URL") or "").strip() or "https://s1saude.atlassian.net"
 
 if not EMAIL or not TOKEN:
-    print("AVISO: JIRA_USER_EMAIL ou JIRA_API_TOKEN não definidos no .env ou Secrets.")
+    print("❌ ERRO CRÍTICO: JIRA_USER_EMAIL ou JIRA_API_TOKEN não definidos!")
+    print(f"   - JIRA_USER_EMAIL presente: {'SIM' if EMAIL else 'NÃO'}")
+    print(f"   - JIRA_API_TOKEN presente: {'SIM' if TOKEN else 'NÃO'}")
+    print("   Configure os Secrets em: Settings -> Secrets and variables -> Actions")
+    sys.exit(1)
 
 auth_str = f"{EMAIL}:{TOKEN}"
 auth_b64 = base64.b64encode(auth_str.encode('ascii')).decode('ascii')
@@ -79,7 +83,11 @@ def fetch_all_auditoria_issues():
             
         r = requests.post(f"{BASE_URL}/rest/api/3/search/jql", headers=headers, json=body)
         if r.status_code != 200:
-            print(f"Erro na requisição: {r.status_code} - {r.text}")
+            print(f"❌ Erro na requisição Jira (Status {r.status_code}): {r.text}")
+            if len(all_issues) == 0:
+                print(f"❌ Falha crítica ao acessar a API do Jira em: {BASE_URL}")
+                print("   Verifique se as credenciais JIRA_USER_EMAIL e JIRA_API_TOKEN estão corretas.")
+                sys.exit(1)
             break
             
         data = r.json()

@@ -26,10 +26,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build-and-deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout do Repositório
@@ -46,20 +43,36 @@ jobs:
           python -m pip install --upgrade pip
           pip install -r requirements.txt
 
-      - name: Executar Pipeline de Extração e Auditoria Jira
+      - name: 1. Extração de Tickets Jira Cloud
         env:
           JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
           JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
           JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+        run: python scripts/extractor_s1.py
+
+      - name: 2. Extração de Histórico e Interações
+        env:
+          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+        run: python scripts/extract_interactions.py
+
+      - name: 3. Processamento Analítico & Excel
+        run: python scripts/analytics_s1.py
+
+      - name: 4. Monitoramento de Alertas e Vigências
+        env:
+          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+        run: python scripts/monitor_alertas_diretoria.py
+
+      - name: 5. Geração do Cockpit Web Criptografado (AES-256)
+        env:
           AUTH_USERS_JSON: ${{ secrets.AUTH_USERS_JSON }}
           PASS_USER_S1: ${{ secrets.PASS_USER_S1 }}
           PASS_LOGIN: ${{ secrets.PASS_LOGIN }}
-        run: |
-          python scripts/extractor_s1.py
-          python scripts/extract_interactions.py
-          python scripts/analytics_s1.py
-          python scripts/monitor_alertas_diretoria.py
-          python scripts/build_professional_dashboard.py
+        run: python scripts/build_professional_dashboard.py
 
       - name: Configurar GitHub Pages
         uses: actions/configure-pages@v5
@@ -69,6 +82,13 @@ jobs:
         with:
           path: '.'
 
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
       - name: Publicar no GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

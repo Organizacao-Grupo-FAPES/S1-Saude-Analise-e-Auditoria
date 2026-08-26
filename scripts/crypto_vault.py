@@ -27,9 +27,11 @@ def load_configured_users() -> dict:
     users = {}
 
     # 1. Variável AUTH_USERS_JSON (JSON string)
-    auth_json = os.getenv("AUTH_USERS_JSON", "")
+    auth_json = (os.getenv("AUTH_USERS_JSON") or "").strip()
     if auth_json:
         try:
+            if (auth_json.startswith("'") and auth_json.endswith("'")) or (auth_json.startswith('"') and auth_json.endswith('"')):
+                auth_json = auth_json[1:-1]
             parsed = json.loads(auth_json)
             if isinstance(parsed, list):
                 for item in parsed:
@@ -77,7 +79,7 @@ def load_configured_users() -> dict:
             print(f"Aviso ao ler users.json: {e}")
 
     # 3. Variável AUTH_USERS_LIST (Ex: "marcelo.guedes:s1@jira:Marcelo Guedes, rubia.felix:s1@jira:Rubia Felix")
-    auth_list = os.getenv("AUTH_USERS_LIST", "")
+    auth_list = (os.getenv("AUTH_USERS_LIST") or "").strip()
     if not users and auth_list:
         entries = auth_list.split(",")
         for entry in entries:
@@ -89,11 +91,9 @@ def load_configured_users() -> dict:
                 perfil = parts[3] if len(parts) > 3 else "Usuário Corporativo"
                 users[u] = {"password": pwd, "nome": nome, "perfil": perfil}
 
-    # 4. Fallback simples via PASS_USER_S1 / PASS_LOGIN
+    # 4. Fallback simples via PASS_USER_S1 / PASS_LOGIN ou senha corporativa padrão
     if not users:
-        single_pass = os.getenv("PASS_USER_S1", os.getenv("PASS_LOGIN", ""))
-        if not single_pass:
-            raise ValueError("Nenhum usuário ou senha configurado! Defina AUTH_USERS_JSON ou PASS_USER_S1 no .env ou Secrets.")
+        single_pass = (os.getenv("PASS_USER_S1") or os.getenv("PASS_LOGIN") or "s1@jira").strip()
         users = {
             "marcelo.guedes": {
                 "password": single_pass,
