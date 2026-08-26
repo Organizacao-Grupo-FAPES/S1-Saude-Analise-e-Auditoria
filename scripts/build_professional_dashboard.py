@@ -1641,13 +1641,13 @@ html_content = """<!DOCTYPE html>
       <div class="top-actions">
         <div class="status-chip">
           <div class="lbl">Sincronização Jira</div>
-          <div class="val">2.550 ITENS</div>
+          <div class="val" id="chip-sync-count">""" + f"{len(records):,}".replace(",", ".") + """ ITENS</div>
         </div>
         <div class="status-chip">
           <div class="lbl">Total Mapeado</div>
-          <div class="val" id="top-vidas-count">2.239 VIDAS</div>
+          <div class="val" id="top-vidas-count">""" + f"{len([r for r in records if r.get('Tipo Item') == 'Subtarefa']):,}".replace(",", ".") + """ VIDAS</div>
         </div>
-        <button class="btn-top btn-top-sync" onclick="iniciarSincronizacaoJira()">
+        <button id="btn-sync-jira" class="btn-top btn-top-sync" onclick="iniciarSincronizacaoJira()">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
           <span>Atualizar Dados</span>
         </button>
@@ -3779,7 +3779,28 @@ html_content = """<!DOCTYPE html>
     chartEmpFull.update();
   }
 
-  window.onload = () => { restoreSessionIfActive(); };
+  function checkEnvironmentAndToggleSyncBtn() {
+    const syncBtn = document.getElementById("btn-sync-jira");
+    if (!syncBtn) return;
+    const host = (window.location.hostname || "").toLowerCase();
+    const isLocal = host === "localhost" || 
+                    host === "127.0.0.1" || 
+                    host.startsWith("192.168.") || 
+                    host.startsWith("10.") || 
+                    host.startsWith("172.") ||
+                    window.location.protocol === "file:";
+    
+    if (!isLocal) {
+      syncBtn.style.display = "none";
+    } else {
+      syncBtn.style.display = "inline-flex";
+    }
+  }
+
+  window.onload = () => {
+    checkEnvironmentAndToggleSyncBtn();
+    restoreSessionIfActive();
+  };
 </script>
 
 </body>
