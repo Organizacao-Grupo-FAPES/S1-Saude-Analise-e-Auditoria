@@ -1,0 +1,74 @@
+name: S1 Saúde - Sincronização Jira & Deploy GitHub Pages
+
+on:
+  # Agendamento: Segunda a Sexta, das 08h às 18h de 4 em 4 horas (Horário de Brasília / UTC-3)
+  # 08:00 BRT = 11:00 UTC | 12:00 BRT = 15:00 UTC | 16:00 BRT = 19:00 UTC
+  schedule:
+    - cron: '0 11,15,19 * * 1-5'
+  
+  # Permite disparo manual com 1 clique a qualquer momento pela aba Actions
+  workflow_dispatch:
+
+  # Deploy automático ao atualizar a branch principal
+  push:
+    branches:
+      - main
+      - master
+
+# Permissões necessárias para publicar no GitHub Pages
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  build-and-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout do Repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Ambiente Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Instalar Dependências do Pipeline
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Executar Pipeline de Extração e Auditoria Jira
+        env:
+          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+          AUTH_USERS_JSON: ${{ secrets.AUTH_USERS_JSON }}
+          PASS_USER_S1: ${{ secrets.PASS_USER_S1 }}
+          PASS_LOGIN: ${{ secrets.PASS_LOGIN }}
+        run: |
+          python scripts/extractor_s1.py
+          python scripts/extract_interactions.py
+          python scripts/analytics_s1.py
+          python scripts/monitor_alertas_diretoria.py
+          python scripts/build_professional_dashboard.py
+
+      - name: Configurar GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Empacotar Artefatos do Cockpit
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: '.'
+
+      - name: Publicar no GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

@@ -1,0 +1,48 @@
+# ==========================================
+# S1 SAÚDE - SEGURANÇA E PROTEÇÃO LGPD
+# ==========================================
+
+# Ambientes e Variáveis Secretas
+.env
+.env.*
+!.env.example
+*.env
+credentials.json
+auth_config.json
+users.json
+
+# Dados Locais e Arquivos Temporários de Auditoria (LGPD - NUNCA SOBEM AO GIT)
+data/*
+!data/.gitkeep
+Relatorio_Executivo_Auditoria_S1.xlsx
+*.xlsx
+*.csv
+*.parquet
+
+# Python e Compilação
+__pycache__/
+*.py[cod]
+node_modules/
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+*.log
+
+# Arquivos Temporários do Office
+~$*.xlsx
+~$*.docx
+~$*.pptx
+
+# IDEs e Editores
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace
+
+# Sistema Operacional
+Thumbs.db
+Desktop.ini
+.DS_Store
