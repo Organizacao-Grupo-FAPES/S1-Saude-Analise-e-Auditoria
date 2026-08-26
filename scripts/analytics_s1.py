@@ -101,6 +101,7 @@ def run_analytics():
         tempo_medio_aberto_dias=("aging_dias", "mean"),
         lote_mais_antigo=("Data Criação", "min")
     ).reset_index().sort_values(by="total_pendentes", ascending=False)
+    top_empresas_pend_df["lote_mais_antigo"] = pd.to_datetime(top_empresas_pend_df["lote_mais_antigo"], errors="coerce").dt.strftime("%d/%m/%Y").fillna("-")
     
     # 9. Relatório Consolidado JSON
     analytics_payload = {

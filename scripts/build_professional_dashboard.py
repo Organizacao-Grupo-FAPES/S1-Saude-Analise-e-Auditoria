@@ -2318,6 +2318,11 @@ html_content = """<!DOCTYPE html>
       </div>
 
       <div class="drawer-field">
+        <div class="drawer-label">Data de Criação (Entrada)</div>
+        <div class="drawer-value" id="d-data-criacao">-</div>
+      </div>
+
+      <div class="drawer-field">
         <div class="drawer-label">Data de Vigência</div>
         <div class="drawer-value" id="d-vigencia" style="color: var(--s1-primary);">-</div>
       </div>
@@ -2421,6 +2426,38 @@ html_content = """<!DOCTYPE html>
   let filteredVidas = [];
   let currentPage = 1;
   const pageSize = 50;
+
+  function formatarDataBR(dateStr) {
+    if (!dateStr || dateStr === "-" || dateStr === "None" || dateStr === "null" || dateStr === "undefined") return "-";
+    const str = String(dateStr).trim();
+    if (!str) return "-";
+    
+    // Se ja estiver no formato brasileiro DD/MM/AAAA
+    if (/^\\d{2}\\/\\d{2}\\/\\d{4}/.test(str)) return str;
+    
+    // Tratar formatos ISO e padroes: YYYY-MM-DD ou YYYY-MM-DD HH:MM:SS ou YYYY-MM-DDTHH:MM:SS
+    const cleanStr = str.replace('T', ' ');
+    const match = cleanStr.match(/^(\\d{4})-(\\d{2})-(\\d{2})(?:\\s+(\\d{2}):(\\d{2})(?::(\\d{2}))?)?/);
+    if (match) {
+      const [_, ano, mes, dia, hora, min] = match;
+      if (hora && min) {
+        return `${dia}/${mes}/${ano} ${hora}:${min}`;
+      }
+      return `${dia}/${mes}/${ano}`;
+    }
+    
+    try {
+      const d = new Date(str);
+      if (!isNaN(d.getTime())) {
+        const dia = String(d.getDate()).padStart(2, '0');
+        const mes = String(d.getMonth() + 1).padStart(2, '0');
+        const ano = d.getFullYear();
+        return `${dia}/${mes}/${ano}`;
+      }
+    } catch(e) {}
+    
+    return str;
+  }
 
   function decryptVaultWithCredentials(username, password) {
     if (window.NobleCrypto && typeof window.NobleCrypto.decryptVault === 'function') {
@@ -2597,8 +2634,8 @@ html_content = """<!DOCTYPE html>
             <td><span class="ticket-link">${item.chave} ↗</span></td>
             <td><strong>${item.beneficiario || 'Não identificado'}</strong></td>
             <td>${item.empresa || 'Não informada'}</td>
-            <td style="color: var(--text-muted);">${item.data_entrada || '-'}</td>
-            <td><strong style="color: var(--s1-red);">${item.data_pendencia || '-'}</strong></td>
+            <td style="color: var(--text-muted);">${formatarDataBR(item.data_entrada)}</td>
+            <td><strong style="color: var(--s1-red);">${formatarDataBR(item.data_pendencia)}</strong></td>
             <td><span class="badge b-diretoria">+${item.dias_espera || 0} dias aguardando</span></td>
             <td style="text-align: center;"><span class="badge b-diretoria">${item.acao_necessaria || 'Parecer Diretoria'}</span></td>
           </tr>
@@ -2620,8 +2657,8 @@ html_content = """<!DOCTYPE html>
             <td><span class="ticket-link">${item.chave} ↗</span></td>
             <td><strong>${item.beneficiario || 'Não identificado'}</strong></td>
             <td>${item.empresa || 'Não informada'}</td>
-            <td style="color: var(--text-muted);">${item.data_entrada || '-'}</td>
-            <td><strong style="color: var(--s1-amber);">${item.data_pendencia || '-'}</strong></td>
+            <td style="color: var(--text-muted);">${formatarDataBR(item.data_entrada)}</td>
+            <td><strong style="color: var(--s1-amber);">${formatarDataBR(item.data_pendencia)}</strong></td>
             <td><span class="badge b-pendente">+${item.dias_espera || 0} dias</span></td>
             <td style="text-align: center;"><span class="badge b-pendente">${item.origem_pendencia || 'Documento Pendente'}</span></td>
           </tr>
@@ -2853,6 +2890,8 @@ html_content = """<!DOCTYPE html>
     document.getElementById("d-ticket-key").textContent = item["Chave"];
     document.getElementById("d-status-badge").innerHTML = `<span class="badge ${getBadgeClass(item['Status Atual'])}">${item['Status Atual']}</span>`;
     document.getElementById("d-empresa").textContent = item["Empresa / Contrato"] || item["Resumo Lote (Parent)"] || "-";
+    const dtCriacaoEl = document.getElementById("d-data-criacao");
+    if (dtCriacaoEl) dtCriacaoEl.textContent = formatarDataBR(item["Data Criação"]);
     document.getElementById("d-vigencia").textContent = item["Vigência"] || "Não informada";
     document.getElementById("d-tipo-beneficiario").textContent = `${item['Tipo Beneficiário'] || 'Titular'} • ${item['Tipo Movimentação'] || 'Inclusão'}`;
     document.getElementById("d-cpt").textContent = item["Análise CPT"] || "Empresarial";
@@ -2923,7 +2962,7 @@ html_content = """<!DOCTYPE html>
         <td>${r['Tipo Beneficiário'] || 'Titular'}</td>
         <td>${r['Análise CPT'] || 'Empresarial'}</td>
         <td>${r['Responsável'] || 'Raquel Lopes'}</td>
-        <td style="color: var(--text-muted); font-size: 10.5px;">${r['Data Criação'] ? r['Data Criação'].substring(0, 10) : '-'}</td>
+        <td style="color: var(--text-muted); font-size: 10.5px;">${formatarDataBR(r['Data Criação'])}</td>
       `;
       tbody.appendChild(tr);
     });
@@ -2956,7 +2995,7 @@ html_content = """<!DOCTYPE html>
       const tr = document.createElement("tr");
       tr.onclick = () => openDrawerByKey(t.ticket);
       tr.innerHTML = `
-        <td style="color: var(--text-muted);">${t.data}</td>
+        <td style="color: var(--text-muted);">${formatarDataBR(t.data)}</td>
         <td><span class="ticket-link">${t.ticket}</span></td>
         <td><strong>${t.beneficiario || '-'}</strong></td>
         <td>${t.empresa || '-'}</td>
@@ -2972,7 +3011,7 @@ html_content = """<!DOCTYPE html>
     filteredVidas.forEach(d => {
       const name = (d["Beneficiário (Nome)"] || "").replace(/,/g, " ");
       const emp = (d["Empresa / Contrato"] || "").replace(/,/g, " ");
-      csv += `${d['Chave']},"${name}","${emp}",${d['Vigência']},${d['Status Atual']},${d['Tipo Beneficiário']},${d['Análise CPT']},${d['Responsável']},${d['Data Criação']}\\n`;
+      csv += `${d['Chave']},"${name}","${emp}",${d['Vigência']},${d['Status Atual']},${d['Tipo Beneficiário']},${d['Análise CPT']},${d['Responsável']},${formatarDataBR(d['Data Criação'])}\\n`;
     });
 
     const blob = new Blob(["\\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
@@ -3254,7 +3293,7 @@ html_content = """<!DOCTYPE html>
         concluidos: e.concluidos,
         agingMedio: eAgingMean,
         vigenciaPrincipal: topVg,
-        loteMaisAntigo: (e.minCriacao || "").slice(0, 10)
+        loteMaisAntigo: formatarDataBR(e.minCriacao)
       };
     });
 
@@ -3445,7 +3484,7 @@ html_content = """<!DOCTYPE html>
           <td style="text-align: center;"><span style="color: var(--s1-red); font-weight: 700;">${r.criticos.toLocaleString('pt-BR')}</span></td>
           <td style="text-align: center;"><span class="badge ${badgeAgingClass}">${r.agingMedio.toFixed(1)} dias</span></td>
           <td><span style="font-weight: 600; color: var(--text-dark);">${r.vigenciaPrincipal}</span></td>
-          <td style="color: var(--text-muted); font-size: 10.5px;">${r.loteMaisAntigo || '-'}</td>
+          <td style="color: var(--text-muted); font-size: 10.5px;">${formatarDataBR(r.loteMaisAntigo)}</td>
           <td style="text-align: center;">
             <button class="btn-table-action" onclick="filtrarEmpresaNaBase('${safeEmpName}')" title="Filtrar beneficiários desta empresa na Base Nominal">
               <span>Filtrar Vidas ➔</span>
@@ -3481,7 +3520,7 @@ html_content = """<!DOCTYPE html>
     let csv = "Posicao,Empresa_Contrato,Total_Pendentes,Analise_Pendente,Em_Andamento,Casos_Criticos,Aging_Medio_Dias,Vigencia_Principal,Lote_Mais_Antigo\\n";
     topPendenciasData.forEach((r, idx) => {
       const name = (r.nome || "").replace(/,/g, " ");
-      csv += `${idx + 1},"${name}",${r.total},${r.analise},${r.andamento},${r.criticos},${r.agingMedio.toFixed(1)},${r.vigenciaPrincipal},${r.loteMaisAntigo}\\n`;
+      csv += `${idx + 1},"${name}",${r.total},${r.analise},${r.andamento},${r.criticos},${r.agingMedio.toFixed(1)},${r.vigenciaPrincipal},${formatarDataBR(r.loteMaisAntigo)}\\n`;
     });
 
     const blob = new Blob(["\\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
