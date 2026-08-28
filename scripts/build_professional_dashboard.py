@@ -61,7 +61,7 @@ html_content = """<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>S1 Saúde | Cockpit Gestão de Auditoria & Implantação de Contratos</title>
 <link rel="icon" type="image/png" href="https://s1saude.com.br/wp-content/uploads/2021/08/cropped-cropped-fab-180x180.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -102,8 +102,27 @@ html_content = """<!DOCTYPE html>
   }
 
   /* ======================================================== */
-  /* SIDEBAR LATERAL FIXA MODERNA (ZERO EMOJIS - PURE SVG) */
+  /* SIDEBAR LATERAL FIXA & OFFCANVAS MOBILE */
   /* ======================================================== */
+  .sidebar-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(15, 23, 42, 0.5);
+    backdrop-filter: blur(4px);
+    z-index: 1040;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+  }
+
+  .sidebar-backdrop.active {
+    display: block;
+    opacity: 1;
+  }
+
   .sidebar {
     width: var(--sidebar-width);
     background: #FFFFFF;
@@ -116,6 +135,7 @@ html_content = """<!DOCTYPE html>
     flex-direction: column;
     z-index: 100;
     box-shadow: 1px 0 8px rgba(0, 0, 0, 0.03);
+    transition: left 0.28s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .sidebar-brand {
@@ -124,6 +144,27 @@ html_content = """<!DOCTYPE html>
     display: flex;
     flex-direction: column;
     gap: 8px;
+  }
+
+  .btn-close-sidebar {
+    display: none;
+    background: #F1F5F9;
+    border: none;
+    color: var(--text-dark);
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s ease;
+  }
+
+  .btn-close-sidebar:hover {
+    background: #E2E8F0;
+    color: var(--s1-red);
   }
 
   .brand-logo-card {
@@ -242,6 +283,35 @@ html_content = """<!DOCTYPE html>
     color: #fff;
     box-shadow: 0 4px 14px rgba(40, 35, 148, 0.12);
     margin-bottom: 12px;
+  }
+
+  .top-nav-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .btn-hamburger {
+    display: none;
+    background: rgba(255, 255, 255, 0.16);
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    color: #FFFFFF;
+    width: 38px;
+    height: 38px;
+    border-radius: 8px;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.15s ease;
+  }
+
+  .btn-hamburger:hover {
+    background: rgba(255, 255, 255, 0.28);
+  }
+
+  .btn-hamburger svg {
+    stroke: #FFFFFF;
   }
 
   .top-titles h1 {
@@ -416,6 +486,56 @@ html_content = """<!DOCTYPE html>
     border: 1px solid #C7D2FE;
   }
 
+  /* BARRA DE NAVEGAÇÃO INFERIOR PARA MOBILE (ESTILO APP NATIVO) */
+  .mobile-bottom-nav {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 56px;
+    background: #FFFFFF;
+    border-top: 1px solid var(--card-border);
+    z-index: 950;
+    box-shadow: 0 -3px 14px rgba(0, 0, 0, 0.07);
+    padding-bottom: env(safe-area-inset-bottom);
+    justify-content: space-around;
+    align-items: center;
+  }
+
+  .b-nav-item {
+    background: transparent;
+    border: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    color: var(--text-muted);
+    font-size: 9.5px;
+    font-weight: 700;
+    font-family: inherit;
+    cursor: pointer;
+    padding: 6px 4px;
+    flex: 1;
+    height: 100%;
+    transition: all 0.15s ease;
+  }
+
+  .b-nav-item svg {
+    stroke: var(--text-muted);
+    transition: stroke 0.15s ease, transform 0.15s ease;
+  }
+
+  .b-nav-item.active {
+    color: var(--s1-primary);
+  }
+
+  .b-nav-item.active svg {
+    stroke: var(--s1-primary);
+    transform: scale(1.1);
+  }
+
   /* Panels */
   .panel { display: none; }
   .panel.active { display: block; }
@@ -437,9 +557,230 @@ html_content = """<!DOCTYPE html>
   }
 
   @media (max-width: 900px) {
-    .sidebar { display: none; }
-    .main-content { margin-left: 0; width: 100%; }
-    .row-6, .row-5, .row-4, .row-3, .row-2 { grid-template-columns: 1fr; }
+    .sidebar {
+      left: -320px;
+      width: 280px;
+      max-width: 85vw;
+      box-shadow: 4px 0 20px rgba(0, 0, 0, 0.18);
+      z-index: 1050;
+    }
+    .sidebar.mobile-open {
+      left: 0 !important;
+    }
+    .sidebar-brand {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 14px;
+    }
+    .btn-close-sidebar {
+      display: flex;
+    }
+    .btn-hamburger {
+      display: flex;
+    }
+    .main-content {
+      margin-left: 0;
+      width: 100%;
+      padding: 12px 14px 75px;
+    }
+    .mobile-bottom-nav {
+      display: flex;
+    }
+    .row-6, .row-5, .row-4 {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+    .row-3, .row-2, .row-2-1, .row-1-2 {
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .drawer {
+      width: 100vw;
+      max-width: 100vw;
+      right: -100vw;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .top-navbar {
+      padding: 12px 14px;
+      gap: 10px;
+    }
+    .top-nav-left {
+      width: 100%;
+    }
+    .top-titles h1 {
+      font-size: 13.5px;
+    }
+    .top-titles p {
+      font-size: 8.5px;
+    }
+    .top-actions {
+      width: 100%;
+      justify-content: space-between;
+      gap: 6px;
+      flex-wrap: nowrap;
+    }
+    .status-chip {
+      padding: 4px 8px;
+      flex: 1;
+      text-align: center;
+    }
+    .status-chip .val {
+      font-size: 10.5px;
+    }
+    .status-chip .lbl {
+      font-size: 7.5px;
+    }
+    .btn-top {
+      padding: 6px 10px;
+      font-size: 10.5px;
+      flex-shrink: 0;
+    }
+    .btn-top .btn-top-label {
+      display: none;
+    }
+
+    /* Date Bar */
+    .global-date-bar {
+      padding: 8px 10px;
+      gap: 8px;
+    }
+    .date-bar-left {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding-bottom: 2px;
+    }
+    .date-bar-left::-webkit-scrollbar {
+      display: none;
+    }
+    .preset-buttons {
+      flex-wrap: nowrap;
+      gap: 4px;
+    }
+    .btn-preset {
+      flex-shrink: 0;
+      white-space: nowrap;
+      padding: 5px 9px;
+      font-size: 10px;
+    }
+    .custom-date-inputs {
+      width: 100%;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .custom-date-inputs label {
+      font-size: 10px;
+    }
+    .custom-date-inputs input[type="date"] {
+      flex: 1;
+      min-width: 95px;
+      padding: 4px 6px;
+      font-size: 10px;
+    }
+    .filtered-period-badge {
+      width: 100%;
+      text-align: center;
+      font-size: 9.5px;
+    }
+
+    /* KPIs */
+    .kpi-card {
+      padding: 10px 10px;
+      gap: 8px;
+    }
+    .kpi-icon-box {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+    }
+    .kpi-icon-box svg {
+      width: 16px;
+      height: 16px;
+    }
+    .kpi-body .lbl {
+      font-size: 9px;
+    }
+    .kpi-body .val {
+      font-size: 16px;
+    }
+    .kpi-body .sub {
+      font-size: 8.5px;
+    }
+
+    /* Charts */
+    .chart-box {
+      height: 210px;
+    }
+    .chart-box-tall {
+      height: 250px;
+    }
+
+    /* Filters Bar */
+    .filters-bar {
+      padding: 8px 10px;
+    }
+    .filter-inputs {
+      width: 100%;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 6px;
+    }
+    .filter-inputs select, .filter-inputs input[type="text"] {
+      width: 100%;
+      font-size: 11px;
+      padding: 7px 10px;
+    }
+    .btn-action {
+      width: 100%;
+      justify-content: center;
+      font-size: 11px;
+      padding: 8px 12px;
+    }
+
+    /* Filter pills */
+    .filter-pills {
+      flex-wrap: nowrap;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+      padding-bottom: 4px;
+    }
+    .filter-pills::-webkit-scrollbar {
+      display: none;
+    }
+    .filter-pill {
+      flex-shrink: 0;
+      white-space: nowrap;
+      padding: 5px 10px;
+      font-size: 10.5px;
+    }
+
+    /* Login Card */
+    .login-card {
+      padding: 24px 18px 20px;
+      border-radius: 12px;
+    }
+    .login-header-text h2 {
+      font-size: 17px;
+    }
+    .login-header-text p {
+      font-size: 11px;
+    }
+    .login-input-wrap input {
+      height: 42px;
+      font-size: 13px;
+    }
+  }
+
+  @media (max-width: 360px) {
+    .row-6, .row-5, .row-4 {
+      grid-template-columns: 1fr;
+    }
   }
 
   /* Cards */
@@ -1537,13 +1878,15 @@ html_content = """<!DOCTYPE html>
 
 
   <!-- ======================================================== -->
-  <!-- SIDEBAR LATERAL FIXA MODERNA (PURE SVG ICONS) -->
+  <!-- SIDEBAR LATERAL FIXA MODERNA & OFFCANVAS MOBILE -->
   <!-- ======================================================== -->
-  <aside class="sidebar">
+  <div class="sidebar-backdrop" id="sidebar-backdrop" onclick="closeMobileSidebar()"></div>
+  <aside class="sidebar" id="sidebar-aside">
     <div class="sidebar-brand">
       <div class="brand-logo-card">
         <img src="https://s1saude.com.br/wp-content/uploads/2021/08/logo-s1saude-1.png" alt="S1 Saúde" class="brand-logo-img" onerror="this.outerHTML='<strong style=\\'color:#282394;font-size:16px;font-weight:800;\\'>S1 SAÚDE</strong>'">
       </div>
+      <button class="btn-close-sidebar" onclick="closeMobileSidebar()" title="Fechar Menu">✕</button>
     </div>
 
     <!-- WIDGET DO USUÁRIO LOGADO NO TOPO (ABAIXO DA LOGO) -->
@@ -1634,9 +1977,18 @@ html_content = """<!DOCTYPE html>
 
     <!-- TOP NAVBAR -->
     <header class="top-navbar">
-      <div class="top-titles">
-        <p>S1 Saúde • Monitoramento Estratégico de Análise & Auditoria</p>
-        <h1>Cockpit Gestão de Auditoria & Implantação de Contratos</h1>
+      <div class="top-nav-left">
+        <button class="btn-hamburger" id="btn-hamburger" onclick="toggleMobileSidebar()" title="Abrir Menu de Navegação">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+          </svg>
+        </button>
+        <div class="top-titles">
+          <p>S1 Saúde • Monitoramento Estratégico de Análise & Auditoria</p>
+          <h1>Cockpit Gestão de Auditoria & Implantação de Contratos</h1>
+        </div>
       </div>
       <div class="top-actions">
         <div class="status-chip">
@@ -1647,13 +1999,13 @@ html_content = """<!DOCTYPE html>
           <div class="lbl">Total Mapeado</div>
           <div class="val" id="top-vidas-count">""" + f"{len([r for r in records if r.get('Tipo Item') == 'Subtarefa']):,}".replace(",", ".") + """ VIDAS</div>
         </div>
-        <button id="btn-sync-jira" class="btn-top btn-top-sync" onclick="iniciarSincronizacaoJira()">
+        <button id="btn-sync-jira" class="btn-top btn-top-sync" onclick="iniciarSincronizacaoJira()" title="Atualizar Dados via Jira Cloud">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/><path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/><path d="M8 16H3v5"/></svg>
-          <span>Atualizar Dados</span>
+          <span class="btn-top-label">Atualizar Dados</span>
         </button>
-        <button class="btn-top" onclick="window.print()">
+        <button class="btn-top" onclick="window.print()" title="Exportar Relatório em PDF">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" x2="12" y1="15" y2="3"/></svg>
-          <span>Exportar em PDF</span>
+          <span class="btn-top-label">Exportar em PDF</span>
         </button>
       </div>
     </header>
@@ -2290,6 +2642,30 @@ html_content = """<!DOCTYPE html>
 
   </main>
 
+  <!-- BARRA DE NAVEGAÇÃO INFERIOR PARA MOBILE (ESTILO APP NATIVO) -->
+  <nav class="mobile-bottom-nav" id="mobile-bottom-nav">
+    <button class="b-nav-item active" id="b-nav-exec" onclick="switchNav('tab-exec', document.querySelector('.nav-item[onclick*=\\'tab-exec\\']'))">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="7" height="9" x="3" y="3" rx="1"/><rect width="7" height="5" x="14" y="3" rx="1"/><rect width="7" height="9" x="14" y="12" rx="1"/><rect width="7" height="5" x="3" y="16" rx="1"/></svg>
+      <span>Executivo</span>
+    </button>
+    <button class="b-nav-item" id="b-nav-pendencias" onclick="switchNav('tab-pendencias', document.querySelector('.nav-item[onclick*=\\'tab-pendencias\\']'))">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      <span>Pendências</span>
+    </button>
+    <button class="b-nav-item" id="b-nav-kanban" onclick="switchNav('tab-kanban', document.querySelector('.nav-item[onclick*=\\'tab-kanban\\']'))">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 5v11"/><path d="M12 5v6"/><path d="M18 5v14"/></svg>
+      <span>Kanban</span>
+    </button>
+    <button class="b-nav-item" id="b-nav-diretoria" onclick="switchNav('tab-diretoria', document.querySelector('.nav-item[onclick*=\\'tab-diretoria\\']'))">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
+      <span>Diretoria</span>
+    </button>
+    <button class="b-nav-item" id="b-nav-menu" onclick="toggleMobileSidebar()">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+      <span>Menu</span>
+    </button>
+  </nav>
+
   <!-- DRAWER LATERAL DE DETALHE INDIVIDUAL -->
   <div class="drawer-overlay" id="drawer-overlay" onclick="closeDrawer()"></div>
   <div class="drawer" id="drawer-panel">
@@ -2598,6 +2974,51 @@ html_content = """<!DOCTYPE html>
     { id: "CPT ENVIADA", title: "CPT ENVIADA", match: ["CPT Enviada", "CPT ENVIADA"] }
   ];
 
+  function toggleMobileSidebar() {
+    const sidebar = document.getElementById("sidebar-aside");
+    const backdrop = document.getElementById("sidebar-backdrop");
+    if (sidebar && backdrop) {
+      if (sidebar.classList.contains("mobile-open")) {
+        closeMobileSidebar();
+      } else {
+        openMobileSidebar();
+      }
+    }
+  }
+
+  function openMobileSidebar() {
+    const sidebar = document.getElementById("sidebar-aside");
+    const backdrop = document.getElementById("sidebar-backdrop");
+    if (sidebar) sidebar.classList.add("mobile-open");
+    if (backdrop) backdrop.classList.add("active");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeMobileSidebar() {
+    const sidebar = document.getElementById("sidebar-aside");
+    const backdrop = document.getElementById("sidebar-backdrop");
+    if (sidebar) sidebar.classList.remove("mobile-open");
+    if (backdrop) backdrop.classList.remove("active");
+    document.body.style.overflow = "";
+  }
+
+  function updateBottomNavActive(tabId) {
+    document.querySelectorAll('.b-nav-item').forEach(b => b.classList.remove('active'));
+    if (tabId === 'tab-exec') {
+      const el = document.getElementById('b-nav-exec');
+      if (el) el.classList.add('active');
+    } else if (tabId === 'tab-pendencias') {
+      const el = document.getElementById('b-nav-pendencias');
+      if (el) el.classList.add('active');
+    } else if (tabId === 'tab-kanban') {
+      const el = document.getElementById('b-nav-kanban');
+      if (el) el.classList.add('active');
+    } else if (tabId === 'tab-diretoria') {
+      const el = document.getElementById('b-nav-diretoria');
+      if (el) el.classList.add('active');
+    }
+  }
+
   function switchNav(tabId, el) {
     document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
@@ -2611,6 +3032,10 @@ html_content = """<!DOCTYPE html>
 
     const panel = document.getElementById(tabId);
     if (panel) panel.classList.add('active');
+
+    closeMobileSidebar();
+    updateBottomNavActive(tabId);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
 
     if (tabId === 'tab-kanban') {
       renderKanbanBoard();
