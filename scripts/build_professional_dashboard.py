@@ -291,34 +291,10 @@ html_content = """<!DOCTYPE html>
     gap: 12px;
   }
 
-  .btn-hamburger {
-    display: none;
-    background: rgba(255, 255, 255, 0.16);
-    border: 1px solid rgba(255, 255, 255, 0.28);
-    color: #FFFFFF;
-    width: 38px;
-    height: 38px;
-    border-radius: 8px;
-    cursor: pointer;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    transition: all 0.15s ease;
-  }
-
-  .btn-hamburger:hover {
-    background: rgba(255, 255, 255, 0.28);
-  }
-
-  .btn-hamburger svg {
-    stroke: #FFFFFF;
-  }
-
   .top-titles h1 {
     font-size: 16.5px;
     font-weight: 800;
     line-height: 1.2;
-    color: #FFFFFF;
     letter-spacing: -0.01em;
   }
 
@@ -550,18 +526,30 @@ html_content = """<!DOCTYPE html>
   .row-2-1 { grid-template-columns: 2fr 1fr; }
   .row-1-2 { grid-template-columns: 1fr 2fr; }
 
-  @media (max-width: 1300px) {
-    .row-6, .row-5 { grid-template-columns: repeat(3, 1fr); }
-    .row-4, .row-3 { grid-template-columns: 1fr 1fr; }
-    .row-2-1, .row-1-2 { grid-template-columns: 1fr; }
+  /* ======================================================== */
+  /* RESPONSIVE ARCHITECTURE FOR ALL DEVICE TIERS */
+  /* ======================================================== */
+
+  /* Tier 1: Laptops & Medium Desktops (1101px to 1366px) */
+  @media (max-width: 1366px) {
+    :root {
+      --sidebar-width: 220px;
+    }
+    .row-6 { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+    .row-5 { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+    .row-5 > :last-child { grid-column: span 2; }
+    .row-4 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+    .row-3 { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+    .row-2-1, .row-1-2 { grid-template-columns: 1fr; gap: 12px; }
   }
 
-  @media (max-width: 900px) {
+  /* Tier 2: Tablets in Portrait & Landscape (641px to 1100px - iPad Pro, Surface Pro, iPad Air, Galaxy Tab) */
+  @media (max-width: 1100px) {
     .sidebar {
       left: -320px;
       width: 280px;
       max-width: 85vw;
-      box-shadow: 4px 0 20px rgba(0, 0, 0, 0.18);
+      box-shadow: 4px 0 24px rgba(0, 0, 0, 0.20);
       z-index: 1050;
     }
     .sidebar.mobile-open {
@@ -576,29 +564,80 @@ html_content = """<!DOCTYPE html>
     .btn-close-sidebar {
       display: flex;
     }
-    .btn-hamburger {
-      display: flex;
-    }
     .main-content {
-      margin-left: 0;
-      width: 100%;
-      padding: 12px 14px 75px;
+      margin-left: 0 !important;
+      width: 100% !important;
+      padding: 14px 18px 85px;
     }
     .mobile-bottom-nav {
       display: flex;
     }
-    .row-6, .row-5, .row-4 {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 8px;
+    .top-navbar {
+      padding: 12px 16px;
+      gap: 12px;
     }
-    .row-3, .row-2, .row-2-1, .row-1-2 {
-      grid-template-columns: 1fr;
+    .top-titles h1 {
+      font-size: 15px;
+    }
+    .top-titles p {
+      font-size: 9.5px;
+    }
+    .global-date-bar {
+      flex-direction: column;
+      align-items: stretch;
       gap: 10px;
     }
+    .date-bar-left {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .date-bar-left::-webkit-scrollbar {
+      display: none;
+    }
+    .preset-buttons {
+      flex-wrap: nowrap;
+      gap: 5px;
+    }
+    .btn-preset {
+      flex-shrink: 0;
+      white-space: nowrap;
+      padding: 5px 10px;
+      font-size: 11px;
+    }
+    .custom-date-inputs {
+      width: 100%;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    .row-6 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .row-5 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .row-5 > :last-child {
+      grid-column: span 2;
+    }
+    .row-4 {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .row-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+    }
+    .row-2, .row-2-1, .row-1-2 {
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
     .drawer {
-      width: 100vw;
-      max-width: 100vw;
-      right: -100vw;
+      width: 85vw;
+      max-width: 520px;
     }
   }
 
@@ -688,28 +727,74 @@ html_content = """<!DOCTYPE html>
       font-size: 9.5px;
     }
 
-    /* KPIs */
+    /* Mobile: KPI grids em 1 coluna (um embaixo do outro) */
+    .row-6, .row-5, .row-4, .row-3, .row-2, .row-2-1, .row-1-2 {
+      grid-template-columns: 1fr !important;
+      gap: 10px !important;
+    }
+    .row-5 > :last-child {
+      grid-column: auto !important;
+    }
+
+    /* KPIs Mobile: Card Horizontal Arejado de Largura Total */
     .kpi-card {
-      padding: 10px 10px;
-      gap: 8px;
+      display: flex !important;
+      flex-direction: row !important;
+      align-items: center !important;
+      padding: 13px 15px !important;
+      gap: 14px !important;
+      min-height: auto !important;
+      border-radius: 12px !important;
+      background: #FFFFFF !important;
+      border: 1px solid var(--card-border) !important;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.02) !important;
     }
     .kpi-icon-box {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
+      width: 42px !important;
+      height: 42px !important;
+      border-radius: 10px !important;
+      flex-shrink: 0 !important;
+      margin-bottom: 0 !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: center !important;
     }
     .kpi-icon-box svg {
-      width: 16px;
-      height: 16px;
+      width: 20px !important;
+      height: 20px !important;
+    }
+    .kpi-body {
+      flex: 1 !important;
+      min-width: 0 !important;
+      display: flex !important;
+      flex-direction: column !important;
+      gap: 2px !important;
     }
     .kpi-body .lbl {
-      font-size: 9px;
+      font-size: 11.5px !important;
+      font-weight: 700 !important;
+      color: var(--text-muted) !important;
+      text-transform: uppercase !important;
+      letter-spacing: 0.3px !important;
+      white-space: normal !important;
+      line-height: 1.2 !important;
+      margin-bottom: 0 !important;
+      min-height: auto !important;
     }
     .kpi-body .val {
-      font-size: 16px;
+      font-size: 22px !important;
+      font-weight: 800 !important;
+      color: var(--text-dark) !important;
+      line-height: 1.15 !important;
+      letter-spacing: -0.02em !important;
+      margin: 1px 0 !important;
     }
     .kpi-body .sub {
-      font-size: 8.5px;
+      font-size: 10.5px !important;
+      color: var(--text-muted) !important;
+      line-height: 1.2 !important;
+      margin-top: 0 !important;
+      white-space: normal !important;
     }
 
     /* Charts */
@@ -820,6 +905,9 @@ html_content = """<!DOCTYPE html>
     align-items: center;
     gap: 12px;
     padding: 14px 16px;
+    position: relative;
+    overflow: hidden;
+    min-height: 84px;
   }
 
   .kpi-icon-box {
@@ -853,18 +941,18 @@ html_content = """<!DOCTYPE html>
     font-size: 21px;
     font-weight: 800;
     color: var(--text-dark);
-    line-height: 1.1;
+    line-height: 1.15;
     letter-spacing: -0.02em;
   }
 
   .kpi-body .sub {
     font-size: 10px;
     color: var(--text-muted);
-    margin-top: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 4px;
+    margin-top: 3px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.2;
   }
 
   /* Colors for KPIs using S1 Palette */
@@ -874,6 +962,7 @@ html_content = """<!DOCTYPE html>
   .bg-s1-amber { background: #FEF3C7; color: var(--s1-amber); }
   .bg-s1-green { background: #ECFDF5; color: var(--s1-green); }
   .bg-s1-purple { background: #F3E8FF; color: var(--s1-purple); }
+  .bg-s1-red { background: #FEE2E2; color: var(--s1-red); }
 
   /* Interactive Clickable KPI Cards */
   .kpi-card-clickable {
@@ -882,26 +971,9 @@ html_content = """<!DOCTYPE html>
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   }
   .kpi-card-clickable:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 8px 20px rgba(40, 35, 148, 0.12);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(40, 35, 148, 0.10);
     border-color: var(--s1-primary);
-  }
-  .kpi-card-clickable .kpi-click-tag {
-    font-size: 8px;
-    font-weight: 700;
-    color: var(--text-muted);
-    background: #F1F5F9;
-    padding: 1.5px 5.5px;
-    border-radius: 4px;
-    display: inline-flex;
-    align-items: center;
-    gap: 2px;
-    white-space: nowrap;
-    transition: all 0.15s ease;
-  }
-  .kpi-card-clickable:hover .kpi-click-tag {
-    background: var(--s1-primary) !important;
-    color: #FFFFFF !important;
   }
 
   /* Filter Pills for Top Pendências */
@@ -978,6 +1050,214 @@ html_content = """<!DOCTYPE html>
     position: relative;
     height: 380px;
     width: 100%;
+  }
+
+  /* Ranking & Leaderboard Components (Empresas & Transições) */
+  .ranking-leaderboard-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .ranking-leaderboard-item {
+    display: flex;
+    flex-direction: column;
+    background: #F8FAFC;
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 10px 12px;
+    cursor: pointer;
+    gap: 6px;
+    transition: all 0.15s ease;
+  }
+
+  .ranking-leaderboard-item:hover {
+    background: #FFFFFF;
+    border-color: var(--s1-primary);
+    box-shadow: 0 4px 14px rgba(40, 35, 148, 0.08);
+    transform: translateY(-1px);
+  }
+
+  .r-item-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .r-item-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .r-pos-badge {
+    width: 22px;
+    height: 22px;
+    border-radius: 6px;
+    background: #E2E8F0;
+    color: var(--text-dark);
+    font-size: 10.5px;
+    font-weight: 800;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .r-pos-1 { background: #FEF3C7; color: #92400E; }
+  .r-pos-2 { background: #F1F5F9; color: #475569; }
+  .r-pos-3 { background: #FED7AA; color: #9A3412; }
+
+  .r-company-name {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--text-dark);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .r-vidas-count {
+    font-size: 12px;
+    font-weight: 800;
+    color: var(--s1-primary);
+    background: #EDEAFD;
+    padding: 2px 7px;
+    border-radius: 6px;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .r-item-sub {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .r-detail-text {
+    font-size: 9.5px;
+    color: var(--text-muted);
+    font-weight: 600;
+  }
+
+  .r-pct-tag {
+    font-size: 9.5px;
+    font-weight: 700;
+    color: var(--s1-primary);
+  }
+
+  .r-bar-track {
+    width: 100%;
+    height: 5px;
+    background: #E2E8F0;
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 1px;
+  }
+
+  .r-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--s1-primary), #4F46E5);
+    border-radius: 3px;
+    transition: width 0.4s ease;
+  }
+
+  /* Team Leaderboard Transition Styles */
+  .trans-list {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .trans-item {
+    display: flex;
+    flex-direction: column;
+    padding: 9px 12px;
+    background: #F8FAFC;
+    border: 1px solid var(--card-border);
+    border-radius: 9px;
+    gap: 5px;
+    transition: all 0.15s ease;
+  }
+
+  .trans-item:hover {
+    background: #FFFFFF;
+    border-color: #CBD5E1;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+
+  .trans-row-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .trans-title-wrap {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .trans-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .trans-title {
+    font-size: 11.5px;
+    font-weight: 700;
+    color: var(--text-dark);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .trans-count-badge {
+    font-size: 11.5px;
+    font-weight: 800;
+    color: var(--s1-primary);
+    background: #EDEAFD;
+    padding: 2px 7px;
+    border-radius: 6px;
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .trans-row-sub {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    width: 100%;
+  }
+
+  .trans-user-pill {
+    font-size: 9.5px;
+    font-weight: 600;
+    color: var(--text-muted);
+    background: #FFFFFF;
+    border: 1px solid var(--card-border);
+    padding: 1px 6px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  .trans-pct-pill {
+    font-size: 9px;
+    font-weight: 700;
+    color: var(--text-muted);
   }
 
   /* KANBAN BOARD STYLING */
@@ -1553,6 +1833,12 @@ html_content = """<!DOCTYPE html>
   /* ======================================================== */
   /* TELA DE LOGIN CORPORATIVA S1 SAÚDE (AES-256 / LGPD) */
   /* ======================================================== */
+  /* ======================================================== */
+  /* TELA DE LOGIN CORPORATIVA S1 SAÚDE (SPLIT EXECUTIVE) */
+  /* ======================================================== */
+  /* ======================================================== */
+  /* TELA DE LOGIN CORPORATIVA S1 SAÚDE (AES-256 / LGPD) */
+  /* ======================================================== */
   .login-overlay {
     position: fixed;
     top: 0;
@@ -1567,7 +1853,7 @@ html_content = """<!DOCTYPE html>
     display: none;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 16px;
     opacity: 0;
     transition: opacity 0.35s ease, visibility 0.35s ease;
     visibility: hidden;
@@ -1585,8 +1871,8 @@ html_content = """<!DOCTYPE html>
     border-radius: 16px;
     box-shadow: 0 20px 45px -10px rgba(15, 23, 42, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.02);
     width: 100%;
-    max-width: 440px;
-    padding: 36px 32px 28px;
+    max-width: 420px;
+    padding: 32px 28px 24px;
     display: flex;
     flex-direction: column;
     animation: scaleIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
@@ -1600,12 +1886,12 @@ html_content = """<!DOCTYPE html>
   .login-brand {
     display: flex;
     justify-content: center;
-    margin-bottom: 20px;
+    margin-bottom: 16px;
   }
 
   .login-header-text {
     text-align: center;
-    margin-bottom: 24px;
+    margin-bottom: 22px;
   }
 
   .login-header-text h2 {
@@ -1636,13 +1922,7 @@ html_content = """<!DOCTYPE html>
   }
 
   .login-field {
-    margin-bottom: 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 6px;
-  }
-
-  .login-field {
+    margin-bottom: 15px;
     display: flex;
     flex-direction: column;
     gap: 6px;
@@ -1736,7 +2016,7 @@ html_content = """<!DOCTYPE html>
     gap: 8px;
     box-shadow: 0 4px 12px rgba(40, 35, 148, 0.25);
     transition: all 0.2s ease;
-    margin-top: 8px;
+    margin-top: 6px;
   }
 
   .btn-login-submit:hover {
@@ -1745,7 +2025,7 @@ html_content = """<!DOCTYPE html>
   }
 
   .login-footer-security {
-    margin-top: 22px;
+    margin-top: 20px;
     padding-top: 14px;
     border-top: 1px solid #F1F5F9;
     display: flex;
@@ -1755,6 +2035,22 @@ html_content = """<!DOCTYPE html>
     font-size: 11px;
     color: var(--text-muted);
     font-weight: 600;
+  }
+
+  @media (max-width: 480px) {
+    .login-overlay {
+      padding: 12px;
+    }
+    .login-card {
+      padding: 24px 18px 20px;
+      border-radius: 14px;
+    }
+    .login-header-text h2 {
+      font-size: 17px;
+    }
+    .login-header-text p {
+      font-size: 11px;
+    }
   }
 
   /* User Session Widget no Topo da Sidebar */
@@ -1841,7 +2137,7 @@ html_content = """<!DOCTYPE html>
         <span id="login-error-text">Usuário ou senha inválidos.</span>
       </div>
 
-      <form id="login-form" onsubmit="handleLoginSubmit(event)">
+      <form id="login-form" onsubmit="handleLoginSubmit(event); return false;">
         <div class="login-field">
           <label for="input-username">Usuário Corporativo</label>
           <div class="login-input-wrap">
@@ -1886,7 +2182,9 @@ html_content = """<!DOCTYPE html>
       <div class="brand-logo-card">
         <img src="https://s1saude.com.br/wp-content/uploads/2021/08/logo-s1saude-1.png" alt="S1 Saúde" class="brand-logo-img" onerror="this.outerHTML='<strong style=\\'color:#282394;font-size:16px;font-weight:800;\\'>S1 SAÚDE</strong>'">
       </div>
-      <button class="btn-close-sidebar" onclick="closeMobileSidebar()" title="Fechar Menu">✕</button>
+      <button class="btn-close-sidebar" onclick="closeMobileSidebar()" title="Fechar Menu">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
     </div>
 
     <!-- WIDGET DO USUÁRIO LOGADO NO TOPO (ABAIXO DA LOGO) -->
@@ -1978,13 +2276,6 @@ html_content = """<!DOCTYPE html>
     <!-- TOP NAVBAR -->
     <header class="top-navbar">
       <div class="top-nav-left">
-        <button class="btn-hamburger" id="btn-hamburger" onclick="toggleMobileSidebar()" title="Abrir Menu de Navegação">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="3" y1="12" x2="21" y2="12"></line>
-            <line x1="3" y1="6" x2="21" y2="6"></line>
-            <line x1="3" y1="18" x2="21" y2="18"></line>
-          </svg>
-        </button>
         <div class="top-titles">
           <p>S1 Saúde • Monitoramento Estratégico de Análise & Auditoria</p>
           <h1>Cockpit Gestão de Auditoria & Implantação de Contratos</h1>
@@ -2049,11 +2340,8 @@ html_content = """<!DOCTYPE html>
           </div>
           <div class="kpi-body">
             <div class="lbl">Total de Vidas</div>
-            <div class="val" id="kpi-total-vidas">2.239</div>
-            <div class="sub">
-              <span>No período</span>
-              <span class="kpi-click-tag">Base ➔</span>
-            </div>
+            <div class="val" id="kpi-total-vidas">0</div>
+            <div class="sub">No período</div>
           </div>
         </div>
 
@@ -2063,11 +2351,8 @@ html_content = """<!DOCTYPE html>
           </div>
           <div class="kpi-body">
             <div class="lbl">Análise Pendente</div>
-            <div class="val" style="color: var(--s1-secondary);" id="kpi-pendente">1.130</div>
-            <div class="sub">
-              <span id="kpi-sub-pendente">50.5% na fila</span>
-              <span class="kpi-click-tag" style="background: rgba(227,97,89,0.15); color: var(--s1-secondary);">Fila ➔</span>
-            </div>
+            <div class="val" style="color: var(--s1-secondary);" id="kpi-pendente">0</div>
+            <div class="sub" id="kpi-sub-pendente">0.0% na fila</div>
           </div>
         </div>
 
@@ -2077,11 +2362,8 @@ html_content = """<!DOCTYPE html>
           </div>
           <div class="kpi-body">
             <div class="lbl">Em Andamento</div>
-            <div class="val" style="color: var(--s1-tertiary);" id="kpi-andamento">232</div>
-            <div class="sub">
-              <span>Auditoria ativa</span>
-              <span class="kpi-click-tag" style="background: rgba(43,170,177,0.15); color: var(--s1-tertiary);">Ver ➔</span>
-            </div>
+            <div class="val" style="color: var(--s1-tertiary);" id="kpi-andamento">0</div>
+            <div class="sub">Auditoria ativa</div>
           </div>
         </div>
 
@@ -2091,11 +2373,8 @@ html_content = """<!DOCTYPE html>
           </div>
           <div class="kpi-body">
             <div class="lbl">Liberado p/ Cadastrar</div>
-            <div class="val" style="color: var(--s1-green);" id="kpi-liberado">314</div>
-            <div class="sub">
-              <span>Aprovados</span>
-              <span class="kpi-click-tag" style="background: rgba(5,150,105,0.15); color: var(--s1-green);">Aprovados ➔</span>
-            </div>
+            <div class="val" style="color: var(--s1-green);" id="kpi-liberado">0</div>
+            <div class="sub">Aprovados</div>
           </div>
         </div>
 
@@ -2105,11 +2384,8 @@ html_content = """<!DOCTYPE html>
           </div>
           <div class="kpi-body">
             <div class="lbl">Cadastro Concluído</div>
-            <div class="val" style="color: var(--s1-purple);" id="kpi-concluido">438</div>
-            <div class="sub">
-              <span>Ativos na base</span>
-              <span class="kpi-click-tag" style="background: rgba(124,58,237,0.15); color: var(--s1-purple);">Base ➔</span>
-            </div>
+            <div class="val" style="color: var(--s1-purple);" id="kpi-concluido">0</div>
+            <div class="sub">Ativos na base</div>
           </div>
         </div>
 
@@ -2119,11 +2395,8 @@ html_content = """<!DOCTYPE html>
           </div>
           <div class="kpi-body">
             <div class="lbl">Taxa de Liberação</div>
-            <div class="val" style="color: var(--s1-amber);" id="kpi-taxa-liberacao">33.6%</div>
-            <div class="sub">
-              <span>Concluídos + Lib.</span>
-              <span class="kpi-click-tag" style="background: rgba(217,119,6,0.15); color: var(--s1-amber);">Lead Time ➔</span>
-            </div>
+            <div class="val" style="color: var(--s1-amber);" id="kpi-taxa-liberacao">0.0%</div>
+            <div class="sub">Concluídos + Lib.</div>
           </div>
         </div>
       </div>
@@ -2134,7 +2407,7 @@ html_content = """<!DOCTYPE html>
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="16" y2="16"/></svg>
         </div>
         <div>
-          <strong>Diagnóstico Crítico para a Diretoria:</strong> A operação registra <strong>1.130 vidas (50,5% do total)</strong> represadas em <em>Análise Pendente</em> aguardando triagem inicial da equipe de auditoria. O contrato <strong>G&E Serviços concentra 1.274 vidas</strong>, e os maiores lotes represados possuem vigência em <strong>01/02/2026, 01/05/2026 e 01/06/2026</strong>.
+          <strong>Diagnóstico Crítico para a Diretoria:</strong> A operação registra <strong id="alert-vidas-pendentes">0 vidas (0.0% do total)</strong> represadas em <em>Análise Pendente</em> aguardando triagem inicial da equipe de auditoria. O contrato <strong id="alert-top-empresa">G&E Serviços</strong> concentra o maior volume na fila, e os maiores lotes possuem vigência em <strong>01/02/2026, 01/05/2026 e 01/06/2026</strong>.
         </div>
       </div>
 
@@ -2401,7 +2674,7 @@ html_content = """<!DOCTYPE html>
           <div class="kpi-body">
             <div class="lbl">Carlos Henrique de Sousa</div>
             <div class="val">1.892 ações</div>
-            <div class="sub">Abertura de lotes, uploads e 91 conclusões</div>
+            <div class="sub">Operacional & Cadastro final</div>
           </div>
         </div>
 
@@ -2412,7 +2685,7 @@ html_content = """<!DOCTYPE html>
           <div class="kpi-body">
             <div class="lbl">Priscila Tada</div>
             <div class="val">673 ações</div>
-            <div class="sub">302 liberações clínicas e 17 CPTs</div>
+            <div class="sub">302 liberações e 17 CPTs</div>
           </div>
         </div>
 
@@ -2421,77 +2694,172 @@ html_content = """<!DOCTYPE html>
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"/><path d="M6 6h10"/><path d="M6 10h10"/></svg>
           </div>
           <div class="kpi-body">
-            <div class="lbl">Raquel Lopes (Auditoria)</div>
+            <div class="lbl">Raquel Lopes</div>
             <div class="val">317 ações</div>
-            <div class="sub">Fila geral de triagem inicial</div>
+            <div class="sub">Triagem e distribuição da fila</div>
           </div>
         </div>
       </div>
 
       <div class="row row-2">
         <div class="card">
-          <div class="card-title">Transições de Status por Operador (Quem Movimenta a Fila)</div>
-          <div class="chart-box">
-            <canvas id="chartInteracoesEquipe"></canvas>
+          <div class="card-title">
+            Transições de Status por Operador
+            <span class="card-title-tag">Quem Movimenta a Fila</span>
+          </div>
+          <div class="trans-list" id="transicoes-equipe-list">
+            <div class="trans-item">
+              <div class="trans-row-top">
+                <div class="trans-title-wrap">
+                  <span class="trans-dot" style="background: #2BAAB1;"></span>
+                  <span class="trans-title">Triagem p/ Andamento</span>
+                </div>
+                <span class="trans-count-badge">315 ações</span>
+              </div>
+              <div class="trans-row-sub">
+                <span class="trans-user-pill"><svg class="pill-user-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -1.5px; margin-right: 3px; opacity: 0.75;"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Raquel Lopes</span>
+                <span class="trans-pct-pill">100% da fila</span>
+              </div>
+              <div class="r-bar-track"><div class="r-bar-fill" style="width: 100%; background: #2BAAB1;"></div></div>
+            </div>
+
+            <div class="trans-item">
+              <div class="trans-row-top">
+                <div class="trans-title-wrap">
+                  <span class="trans-dot" style="background: #059669;"></span>
+                  <span class="trans-title">Liberação p/ Cadastro</span>
+                </div>
+                <span class="trans-count-badge">302 ações</span>
+              </div>
+              <div class="trans-row-sub">
+                <span class="trans-user-pill"><svg class="pill-user-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -1.5px; margin-right: 3px; opacity: 0.75;"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Priscila Tada</span>
+                <span class="trans-pct-pill">95.8% da fila</span>
+              </div>
+              <div class="r-bar-track"><div class="r-bar-fill" style="width: 95.8%; background: #059669;"></div></div>
+            </div>
+
+            <div class="trans-item">
+              <div class="trans-row-top">
+                <div class="trans-title-wrap">
+                  <span class="trans-dot" style="background: #282394;"></span>
+                  <span class="trans-title">Puxar da Fila p/ Andamento</span>
+                </div>
+                <span class="trans-count-badge">163 ações</span>
+              </div>
+              <div class="trans-row-sub">
+                <span class="trans-user-pill"><svg class="pill-user-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -1.5px; margin-right: 3px; opacity: 0.75;"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Priscila Tada</span>
+                <span class="trans-pct-pill">51.7% da fila</span>
+              </div>
+              <div class="r-bar-track"><div class="r-bar-fill" style="width: 51.7%; background: #282394;"></div></div>
+            </div>
+
+            <div class="trans-item">
+              <div class="trans-row-top">
+                <div class="trans-title-wrap">
+                  <span class="trans-dot" style="background: #7C3AED;"></span>
+                  <span class="trans-title">Cadastro Concluído no Sistema</span>
+                </div>
+                <span class="trans-count-badge">118 ações</span>
+              </div>
+              <div class="trans-row-sub">
+                <span class="trans-user-pill"><svg class="pill-user-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -1.5px; margin-right: 3px; opacity: 0.75;"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Priscila Tada</span>
+                <span class="trans-pct-pill">37.4% da fila</span>
+              </div>
+              <div class="r-bar-track"><div class="r-bar-fill" style="width: 37.4%; background: #7C3AED;"></div></div>
+            </div>
+
+            <div class="trans-item">
+              <div class="trans-row-top">
+                <div class="trans-title-wrap">
+                  <span class="trans-dot" style="background: #383F48;"></span>
+                  <span class="trans-title">Cadastro Concluído na Pasta Z:\\</span>
+                </div>
+                <span class="trans-count-badge">91 ações</span>
+              </div>
+              <div class="trans-row-sub">
+                <span class="trans-user-pill"><svg class="pill-user-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -1.5px; margin-right: 3px; opacity: 0.75;"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Carlos Henrique</span>
+                <span class="trans-pct-pill">28.8% da fila</span>
+              </div>
+              <div class="r-bar-track"><div class="r-bar-fill" style="width: 28.8%; background: #383F48;"></div></div>
+            </div>
+
+            <div class="trans-item">
+              <div class="trans-row-top">
+                <div class="trans-title-wrap">
+                  <span class="trans-dot" style="background: #E36159;"></span>
+                  <span class="trans-title">Liberado com Parecer CPT</span>
+                </div>
+                <span class="trans-count-badge">17 ações</span>
+              </div>
+              <div class="trans-row-sub">
+                <span class="trans-user-pill"><svg class="pill-user-icon" width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: -1.5px; margin-right: 3px; opacity: 0.75;"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>Priscila Tada</span>
+                <span class="trans-pct-pill">5.4% da fila</span>
+              </div>
+              <div class="r-bar-track"><div class="r-bar-fill" style="width: 5.4%; background: #E36159;"></div></div>
+            </div>
           </div>
         </div>
 
         <div class="card">
           <div class="card-title">Matriz de Produtividade & Papéis no Fluxo</div>
-          <table>
-            <thead>
-              <tr>
-                <th>Usuário / Profissional</th>
-                <th>Papel no Processo</th>
-                <th>Volume de Ações</th>
-                <th>Impacto Principal</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>Carlos Henrique de Sousa</strong></td>
-                <td>Operacional / Cadastro</td>
-                <td>1.892 eventos</td>
-                <td>Inclusão de propostas, pastas Z:\\ e finalização no sistema</td>
-              </tr>
-              <tr>
-                <td><strong>Priscila Tada</strong></td>
-                <td>Auditora / Pareceres</td>
-                <td>673 eventos</td>
-                <td>Auditoria técnica, aprovações clínicas e pareceres de CPT</td>
-              </tr>
-              <tr>
-                <td><strong>Raquel Lopes</strong></td>
-                <td>Triagem de Entrada</td>
-                <td>317 eventos</td>
-                <td>Distribuição e transição da fila de pendentes para andamento</td>
-              </tr>
-              <tr>
-                <td><strong>Luiz Felipe Vieira</strong></td>
-                <td>Apoio Operacional</td>
-                <td>15 eventos</td>
-                <td>Ajustes pontuais de cadastro e contratos</td>
-              </tr>
-            </tbody>
-          </table>
+          <div style="overflow-x: auto;">
+            <table style="min-width: 480px;">
+              <thead>
+                <tr>
+                  <th>Usuário / Profissional</th>
+                  <th>Papel no Processo</th>
+                  <th>Volume</th>
+                  <th>Impacto Principal</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>Carlos Henrique de Sousa</strong></td>
+                  <td>Operacional / Cadastro</td>
+                  <td>1.892 eventos</td>
+                  <td>Inclusão de propostas e finalização no sistema</td>
+                </tr>
+                <tr>
+                  <td><strong>Priscila Tada</strong></td>
+                  <td>Auditora / Pareceres</td>
+                  <td>673 eventos</td>
+                  <td>Auditoria técnica, aprovações clínicas e pareceres CPT</td>
+                </tr>
+                <tr>
+                  <td><strong>Raquel Lopes</strong></td>
+                  <td>Triagem de Entrada</td>
+                  <td>317 eventos</td>
+                  <td>Distribuição e transição de pendentes para andamento</td>
+                </tr>
+                <tr>
+                  <td><strong>Luiz Felipe Vieira</strong></td>
+                  <td>Apoio Operacional</td>
+                  <td>15 eventos</td>
+                  <td>Ajustes pontuais de cadastro e contratos</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
 
       <div class="card">
         <div class="card-title">Últimas Movimentações Realizadas na Fila (Log de Auditoria)</div>
-        <table>
-          <thead>
-            <tr>
-              <th>Data/Hora</th>
-              <th>Ticket</th>
-              <th>Beneficiário</th>
-              <th>Empresa</th>
-              <th>Usuário Responsável</th>
-              <th>Transição de Status</th>
-            </tr>
-          </thead>
-          <tbody id="log-transicoes-body"></tbody>
-        </table>
+        <div style="overflow-x: auto; max-height: 420px;">
+          <table style="min-width: 600px;">
+            <thead>
+              <tr>
+                <th>Data/Hora</th>
+                <th>Ticket</th>
+                <th>Beneficiário</th>
+                <th>Empresa</th>
+                <th>Usuário Responsável</th>
+                <th>Transição de Status</th>
+              </tr>
+            </thead>
+            <tbody id="log-transicoes-body"></tbody>
+          </table>
+        </div>
       </div>
     </div>
 
@@ -2578,11 +2946,52 @@ html_content = """<!DOCTYPE html>
     <!-- TAB 6: TOP EMPRESAS & CONTRATOS -->
     <!-- ======================================================== -->
     <div id="tab-empresas" class="panel">
-      <div class="card" style="margin-bottom: 12px;">
-        <div class="card-title">Ranking de Contratos por Volume de Beneficiários Submetidos</div>
-        <div class="chart-box-tall">
-          <canvas id="chartEmpresasFull"></canvas>
+      <!-- EMPRESAS KPI ROW -->
+      <div class="row row-3">
+        <div class="card kpi-card">
+          <div class="kpi-icon-box bg-s1-indigo">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 22V4a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v18Z"/><path d="M6 12H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2"/><path d="M18 9h2a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2h-2"/></svg>
+          </div>
+          <div class="kpi-body">
+            <div class="lbl">Contratos Mapeados</div>
+            <div class="val" id="kpi-emp-total-contratos">0</div>
+            <div class="sub">Empresas ativas no período</div>
+          </div>
         </div>
+
+        <div class="card kpi-card">
+          <div class="kpi-icon-box bg-s1-coral">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" x2="12" y1="8" y2="12"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>
+          </div>
+          <div class="kpi-body">
+            <div class="lbl">Maior Contrato</div>
+            <div class="val" style="color: var(--s1-secondary); font-size: 14.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" id="kpi-emp-top-nome">-</div>
+            <div class="sub" id="kpi-emp-top-vidas">0 vidas</div>
+          </div>
+        </div>
+
+        <div class="card kpi-card">
+          <div class="kpi-icon-box bg-s1-teal">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.21 15.89A10 10 0 1 1 8 2.83"/><path d="M22 12A10 10 0 0 0 12 2v10z"/></svg>
+          </div>
+          <div class="kpi-body">
+            <div class="lbl">Concentração Top 5</div>
+            <div class="val" style="color: var(--s1-tertiary);" id="kpi-emp-top5-pct">0.0%</div>
+            <div class="sub">Do volume total de vidas</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- LEADERBOARD RANKING DOS CONTRATOS -->
+      <div class="card" style="margin-bottom: 12px;">
+        <div class="card-title">
+          <span>Ranking Completo de Empresas & Contratos</span>
+          <span class="card-title-tag" id="ranking-empresas-count-tag">Top Contratos</span>
+        </div>
+        <div style="margin-bottom: 12px;">
+          <input type="text" id="txt-search-ranking-emp" placeholder="Filtrar empresa ou contrato no ranking..." oninput="renderEmpresasRankingList()" style="width: 100%; font-size: 11.5px; padding: 7px 12px; border: 1px solid var(--card-border); border-radius: 8px; font-family: inherit;">
+        </div>
+        <div class="ranking-leaderboard-list" id="ranking-empresas-leaderboard-container"></div>
       </div>
     </div>
 
@@ -2674,7 +3083,9 @@ html_content = """<!DOCTYPE html>
         <div style="font-size: 10px; opacity: 0.8; text-transform: uppercase;">Detalhamento do Beneficiário</div>
         <h3 id="d-beneficiario-nome">Nome do Beneficiário</h3>
       </div>
-      <button class="btn-close-drawer" onclick="closeDrawer()">✕</button>
+      <button class="btn-close-drawer" onclick="closeDrawer()" title="Fechar Detalhes">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
     </div>
 
     <div class="drawer-body">
@@ -3205,8 +3616,15 @@ html_content = """<!DOCTYPE html>
     document.getElementById("kpi-taxa-liberacao").textContent = `${taxa}%`;
 
     const pctPendente = total > 0 ? ((pendente / total) * 100).toFixed(1) : "0.0";
-    document.getElementById("kpi-sub-pendente").textContent = `${pctPendente}% na fila`;
-    document.getElementById("funil-vidas-tag").textContent = `${total.toLocaleString("pt-BR")} Vidas`;
+    const subPendEl = document.getElementById("kpi-sub-pendente");
+    if (subPendEl) subPendEl.textContent = `${pctPendente}% na fila`;
+    const funilTag = document.getElementById("funil-vidas-tag");
+    if (funilTag) funilTag.textContent = `${total.toLocaleString("pt-BR")} Vidas`;
+
+    const alertVidas = document.getElementById("alert-vidas-pendentes");
+    if (alertVidas) {
+      alertVidas.textContent = `${pendente.toLocaleString("pt-BR")} vidas (${pctPendente}% do total)`;
+    }
   }
 
   function updateTop5List() {
@@ -3426,7 +3844,7 @@ html_content = """<!DOCTYPE html>
         <td><strong>${t.beneficiario || '-'}</strong></td>
         <td>${t.empresa || '-'}</td>
         <td><span style="font-weight:700; color:var(--s1-primary);">${t.autor}</span></td>
-        <td><span class="badge b-outro">${t.de_status}</span> ➔ <span class="badge b-liberado">${t.para_status}</span></td>
+        <td><span class="badge b-outro">${t.de_status}</span> <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#64748B" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin: 0 3px;"><polyline points="9 18 15 12 9 6"/></svg> <span class="badge b-liberado">${t.para_status}</span></td>
       `;
       tbody.appendChild(tr);
     });
@@ -3729,13 +4147,13 @@ html_content = """<!DOCTYPE html>
     const kpiLt = document.getElementById("kpi-lt-medio");
     const kpiLtSub = document.getElementById("kpi-lt-sub");
     if (kpiLt) kpiLt.textContent = `${ltMean.toFixed(1)} dias`;
-    if (kpiLtSub) kpiLtSub.textContent = `Mediana: ${ltMedian.toFixed(1)} dias (${concluidas.length} concluídas)`;
+    if (kpiLtSub) kpiLtSub.textContent = `Mediana: ${ltMedian.toFixed(1)}d • ${concluidas.length.toLocaleString('pt-BR')} vidas`;
 
     // KPI 2: Aging Médio da Fila
     const kpiAg = document.getElementById("kpi-aging-medio");
     const kpiAgSub = document.getElementById("kpi-aging-sub");
     if (kpiAg) kpiAg.textContent = `${agingMean.toFixed(1)} dias`;
-    if (kpiAgSub) kpiAgSub.textContent = `Mediana: ${agingMedian.toFixed(1)} dias (${todasPendentes.length} pendentes)`;
+    if (kpiAgSub) kpiAgSub.textContent = `Mediana: ${agingMedian.toFixed(1)}d • ${todasPendentes.length.toLocaleString('pt-BR')} na fila`;
 
     // KPI 3: Maior Fila Concentrada
     const kpiTopEmp = document.getElementById("kpi-top-empresa-nome");
@@ -3770,7 +4188,7 @@ html_content = """<!DOCTYPE html>
     if (kpiGarg) kpiGarg.textContent = `${gargalos30.toLocaleString('pt-BR')} vidas`;
     if (kpiGargSub) {
       const pctGarg = todasPendentes.length > 0 ? ((gargalos30 / todasPendentes.length) * 100).toFixed(1) : "0.0";
-      kpiGargSub.textContent = `${pctGarg}% das pendências atuais`;
+      kpiGargSub.textContent = `${pctGarg}% do volume em fila`;
     }
 
     // Update Charts in tab-pendencias
@@ -3913,7 +4331,8 @@ html_content = """<!DOCTYPE html>
           <td style="color: var(--text-muted); font-size: 10.5px;">${formatarDataBR(r.loteMaisAntigo)}</td>
           <td style="text-align: center;">
             <button class="btn-table-action" onclick="filtrarEmpresaNaBase('${safeEmpName}')" title="Filtrar beneficiários desta empresa na Base Nominal">
-              <span>Filtrar Vidas ➔</span>
+              <span>Filtrar Vidas</span>
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align: middle; margin-left: 2px;"><polyline points="9 18 15 12 9 6"/></svg>
             </button>
           </td>
         </tr>
@@ -4084,14 +4503,57 @@ html_content = """<!DOCTYPE html>
       options: { responsive: true, maintainAspectRatio: false, scales: { x: { grid: { display: false } }, y: { grid: { color: '#F1F5F9' } } } }
     });
 
-    chartInteracoes = new Chart(document.getElementById('chartInteracoesEquipe'), {
-      type: 'bar',
-      data: {
-        labels: ['Triagem p/ Andamento (Raquel Lopes)', 'Liberação p/ Cadastro (Priscila Tada)', 'Puxar da Fila p/ Andamento (Priscila Tada)', 'Cadastro Concluído (Priscila Tada)', 'Cadastro Concluído (Carlos Henrique)', 'Liberado com CPT (Priscila Tada)'],
-        datasets: [{ label: 'Quantidade de Transições', data: [315, 302, 163, 118, 91, 17], backgroundColor: ['#2BAAB1', '#059669', '#282394', '#7C3AED', '#383F48', '#E36159'], borderRadius: 6 }]
-      },
-      options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-    });
+    const elInteracoes = document.getElementById('chartInteracoesEquipe');
+    if (elInteracoes) {
+      chartInteracoes = new Chart(elInteracoes, {
+        type: 'bar',
+        data: {
+          labels: [
+            'Triagem (Raquel Lopes)',
+            'Liberação (Priscila Tada)',
+            'Puxar Fila (Priscila Tada)',
+            'Concluído (Priscila Tada)',
+            'Concluído (Carlos Henrique)',
+            'Liberado CPT (Priscila Tada)'
+          ],
+          datasets: [{
+            label: 'Transições Realizadas',
+            data: [315, 302, 163, 118, 91, 17],
+            backgroundColor: ['#2BAAB1', '#059669', '#282394', '#7C3AED', '#383F48', '#E36159'],
+            borderRadius: 6
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          layout: {
+            padding: { left: 4, right: 8, top: 4, bottom: 4 }
+          },
+          scales: {
+            x: {
+              grid: { color: '#F1F5F9' },
+              ticks: { font: { size: 10 } }
+            },
+            y: {
+              grid: { display: false },
+              ticks: {
+                font: { size: 10, weight: '600' },
+                autoSkip: false
+              }
+            }
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => `${ctx.raw} transições realizadas`
+              }
+            }
+          }
+        }
+      });
+    }
 
     chartVigFull = new Chart(document.getElementById('chartVigenciaFull'), {
       type: 'bar',
@@ -4099,11 +4561,14 @@ html_content = """<!DOCTYPE html>
       options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
     });
 
-    chartEmpFull = new Chart(document.getElementById('chartEmpresasFull'), {
-      type: 'bar',
-      data: { labels: [], datasets: [{ label: 'Total de Vidas', data: [], backgroundColor: '#282394', borderRadius: 6 }] },
-      options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
-    });
+    const elEmpFull = document.getElementById('chartEmpresasFull');
+    if (elEmpFull) {
+      chartEmpFull = new Chart(elEmpFull, {
+        type: 'bar',
+        data: { labels: [], datasets: [{ label: 'Total de Vidas', data: [], backgroundColor: '#282394', borderRadius: 6 }] },
+        options: { indexAxis: 'y', responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+      });
+    }
 
     // Novos Gráficos da Aba Top Pendências & Lead Time
     chartTopEmpresasPendentes = new Chart(document.getElementById('chartTopEmpresasPendentes'), {
@@ -4195,10 +4660,93 @@ html_content = """<!DOCTYPE html>
     });
   }
 
+  function drillDownEmpresa(empNome) {
+    switchNav('tab-base', document.querySelector('[onclick*="tab-base"]'));
+    const sel = document.getElementById('sel-empresa');
+    if (sel) {
+      sel.value = empNome;
+      filterTable();
+    }
+  }
+
+  function renderEmpresasRankingList() {
+    const searchInput = document.getElementById("txt-search-ranking-emp");
+    const search = (searchInput ? searchInput.value : "").toLowerCase();
+    const container = document.getElementById("ranking-empresas-leaderboard-container");
+    if (!container) return;
+
+    const empCounts = {};
+    currentPeriodVidas.forEach(v => {
+      const e = v["Empresa / Contrato"] || "Não informada";
+      empCounts[e] = (empCounts[e] || 0) + 1;
+    });
+
+    const totalVidas = currentPeriodVidas.length || 1;
+    const sorted = Object.entries(empCounts).sort((a, b) => b[1] - a[1]);
+    const maxVidas = sorted.length > 0 ? sorted[0][1] : 1;
+
+    // Atualizar KPIs do topo de Tab Empresas
+    const kpiTotalContratos = document.getElementById("kpi-emp-total-contratos");
+    const kpiTopNome = document.getElementById("kpi-emp-top-nome");
+    const kpiTopVidas = document.getElementById("kpi-emp-top-vidas");
+    const kpiTop5Pct = document.getElementById("kpi-emp-top5-pct");
+    const tagCount = document.getElementById("ranking-empresas-count-tag");
+
+    if (kpiTotalContratos) kpiTotalContratos.textContent = `${sorted.length} Contratos`;
+    if (tagCount) tagCount.textContent = `${sorted.length} Contratos Mapeados`;
+    if (sorted.length > 0) {
+      if (kpiTopNome) {
+        kpiTopNome.textContent = sorted[0][0];
+        kpiTopNome.title = sorted[0][0];
+      }
+      if (kpiTopVidas) {
+        const p0 = ((sorted[0][1] / totalVidas) * 100).toFixed(1);
+        kpiTopVidas.textContent = `${sorted[0][1].toLocaleString('pt-BR')} vidas (${p0}%)`;
+      }
+      if (kpiTop5Pct) {
+        const top5Sum = sorted.slice(0, 5).reduce((acc, curr) => acc + curr[1], 0);
+        kpiTop5Pct.textContent = `${((top5Sum / totalVidas) * 100).toFixed(1)}%`;
+      }
+    }
+
+    const filtered = sorted.filter(([nome]) => !search || nome.toLowerCase().includes(search));
+
+    if (filtered.length === 0) {
+      container.innerHTML = '<div style="text-align:center; padding:20px; color:var(--text-muted); font-size:12px;">Nenhuma empresa encontrada com o termo buscado.</div>';
+      return;
+    }
+
+    container.innerHTML = filtered.map(([nome, count], idx) => {
+      const pctTotal = ((count / totalVidas) * 100).toFixed(1);
+      const pctBar = Math.max(3, (count / maxVidas) * 100).toFixed(1);
+      const posClass = idx === 0 ? 'r-pos-1' : idx === 1 ? 'r-pos-2' : idx === 2 ? 'r-pos-3' : '';
+      return `
+        <div class="ranking-leaderboard-item" onclick="drillDownEmpresa('${nome.replace(/'/g, "\\'")}')" title="Clique para ver os beneficiários de ${nome} na Base Nominal">
+          <div class="r-item-top">
+            <div class="r-item-left">
+              <div class="r-pos-badge ${posClass}">#${idx + 1}</div>
+              <div class="r-company-name">${nome}</div>
+            </div>
+            <div class="r-vidas-count">${count.toLocaleString('pt-BR')} vidas</div>
+          </div>
+          <div class="r-item-sub">
+            <span class="r-detail-text">Contrato Corporativo</span>
+            <span class="r-pct-tag">${pctTotal}% do total</span>
+          </div>
+          <div class="r-bar-track">
+            <div class="r-bar-fill" style="width: ${pctBar}%;"></div>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
   function updateAllChartsData() {
+    if (!chartFunil || !chartVigExec || !chartSegExec || !chartVigFull) return;
+
     const statusCounts = {};
     currentPeriodVidas.forEach(v => {
-      const s = v["Status Atual"] || "Outros";
+      const s = (v["Status Atual"] || "Outros").trim();
       statusCounts[s] = (statusCounts[s] || 0) + 1;
     });
 
@@ -4209,19 +4757,20 @@ html_content = """<!DOCTYPE html>
       (statusCounts['LIBERAR PARA CADASTRAR'] || 0) + (statusCounts['LIBERADO COM CPT'] || 0),
       statusCounts['AUDITORIA EM ANDAMENTO'] || 0,
       statusCounts['CANCELADO'] || 0,
-      (statusCounts['AGUARDANDO DIRETORIA'] || 0) + (statusCounts['PENDÊNCIA CADASTRO'] || 0) + (statusCounts['CPT Enviada'] || 0)
+      (statusCounts['AGUARDANDO DIRETORIA'] || 0) + (statusCounts['PENDÊNCIA CADASTRO'] || 0) + (statusCounts['CPT Enviada'] || 0) + (statusCounts['Outros'] || 0)
     ];
     chartFunil.update();
 
     const vigCounts = {};
     currentPeriodVidas.forEach(v => {
-      const vg = v["Vigência"] || "Não informada";
+      const vg = v["Vigência"] || "Sem data";
       vigCounts[vg] = (vigCounts[vg] || 0) + 1;
     });
+
     const sortedVigs = Object.entries(vigCounts).sort((a, b) => b[1] - a[1]);
-    
-    chartVigExec.data.labels = sortedVigs.slice(0, 8).map(x => x[0]);
-    chartVigExec.data.datasets[0].data = sortedVigs.slice(0, 8).map(x => x[1]);
+    const topVigs = sortedVigs.slice(0, 8);
+    chartVigExec.data.labels = topVigs.map(x => x[0]);
+    chartVigExec.data.datasets[0].data = topVigs.map(x => x[1]);
     chartVigExec.update();
 
     chartVigFull.data.labels = sortedVigs.slice(0, 14).map(x => x[0]);
@@ -4233,15 +4782,7 @@ html_content = """<!DOCTYPE html>
     chartSegExec.data.datasets[0].data = [empTotal, allcareTotal];
     chartSegExec.update();
 
-    const empCounts = {};
-    currentPeriodVidas.forEach(v => {
-      const e = v["Empresa / Contrato"] || "Não informada";
-      empCounts[e] = (empCounts[e] || 0) + 1;
-    });
-    const sortedEmps = Object.entries(empCounts).sort((a, b) => b[1] - a[1]).slice(0, 10);
-    chartEmpFull.data.labels = sortedEmps.map(x => x[0]);
-    chartEmpFull.data.datasets[0].data = sortedEmps.map(x => x[1]);
-    chartEmpFull.update();
+    renderEmpresasRankingList();
   }
 
   function checkEnvironmentAndToggleSyncBtn() {
